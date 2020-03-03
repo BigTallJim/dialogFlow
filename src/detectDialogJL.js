@@ -51,7 +51,7 @@ function detectTextIntent(queries) {
         intentResponse = await detectIntent(
           projectId,
           sessionId,
-          query,
+          query.substring(0,256),
           context,
           languageCode
         );
@@ -72,8 +72,8 @@ function detectTextIntent(queries) {
 
 const fs = require('fs');
 
-var data = fs.readFileSync('./customerComments.txt')
+var dataArray = fs.readFileSync('./customerCommentsBatch2.txt')
     .toString() // convert Buffer to string
     .split('\n') // split string to lines
 
-detectTextIntent(data)
+detectTextIntent(dataArray)
