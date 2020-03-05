@@ -47,7 +47,7 @@ function detectTextIntent(queries) {
     let intentResponse;
     for (const query of queries) {
       try {
-        console.log(`Sending Query: ${query}`);
+        // console.log(`Sending Query: ${query}`);
         intentResponse = await detectIntent(
           projectId,
           sessionId,
@@ -55,10 +55,10 @@ function detectTextIntent(queries) {
           context,
           languageCode
         );
-        console.log('Detected intent');
-        console.log(
-          `Fulfillment Text: ${intentResponse.queryResult.fulfillmentText}`
-        );
+        // console.log('Detected intent');
+        // console.log(
+        //   `Fulfillment Text: ${intentResponse.queryResult.fulfillmentText}`
+        // );
         // Use the context from this response for next queries
         context = intentResponse.queryResult.outputContexts;
       } catch (error) {
@@ -72,7 +72,7 @@ function detectTextIntent(queries) {
 
 const fs = require('fs');
 
-var dataArray = fs.readFileSync('./customerCommentsBatch2.txt')
+var dataArray = fs.readFileSync('./customerCommentsBatch300.txt')
     .toString() // convert Buffer to string
     .split('\n') // split string to lines
 
