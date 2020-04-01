@@ -72,8 +72,40 @@ function detectTextIntent(queries) {
 
 const fs = require('fs');
 
-var dataArray = fs.readFileSync('./customerCommentsAll.txt')
-    .toString() // convert Buffer to string
-    .split('\n') // split string to lines
+const path = require('path');
+var bucketName = 'jl_intent_analysis_upload_bucket1'
+var srcFilename = 'testData.txt'
+var destFilename = path.join('./', 'downloaded.txt')
 
-detectTextIntent(dataArray)
+// Imports the Google Cloud client library
+const {Storage} = require('@google-cloud/storage');
+
+// Creates a client
+const storage = new Storage();
+
+async function downloadFile() {
+  console.log('Current directory: ' + process.cwd());
+  const options = {
+    // The path to which the file should be downloaded, e.g. "./file.txt"
+    destination: destFilename,
+  };
+  
+  // Downloads the file
+  await storage
+  .bucket(bucketName)
+  .file(srcFilename)
+  .download(options);
+  
+  console.log(`gs://${bucketName}/${srcFilename} downloaded to ${destFilename}.`);
+    var dataArray = fs.readFileSync('./downloaded.txt')
+        .toString() // convert Buffer to string
+        .split('\n') // split string to lines
+  
+        console.log(dataArray);
+  }
+  
+  downloadFile().catch(console.error);
+  // [END storage_download_file]
+  
+  // detectTextIntent(dataArray)
+  
