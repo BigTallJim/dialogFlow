@@ -72,7 +72,7 @@ function detectTextIntent(queries) {
 
 const fs = require('fs');
 
-var dataArray = fs.readFileSync('./customerCommentsAll.txt')
+var dataArray = fs.readFileSync('./customerCommentsLong.txt')
     .toString() // convert Buffer to string
     .split('\n') // split string to lines
 
