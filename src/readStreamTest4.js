@@ -9,9 +9,22 @@ async function helloGCS(event, context){
   const bucket = storage.bucket('jl_intent_analysis_upload_bucket1');
   const remoteFile = bucket.file(fileName);
   const textFile = remoteFile.createReadStream();
-  var  buf = '';
+  let buf = '';
+  const fs = require('fs');
   // console.log(`textFile: `,textFile);
+  const { Writable } = require('stream');
+
+  let tempBuf = '';
   
+  const outStream = new Writable({
+    write(chunk, encoding, callback) {
+      console.log("Chunk");
+      tempBuf += chunk.toString();
+      // console.log("CHUNK:", chunk.toString());
+      callback();
+    }
+  });
+
   textFile.on('data', function(d) {
     console.log("Data");
     buf += d;
@@ -21,11 +34,12 @@ async function helloGCS(event, context){
     console.log(`Readstream Error`, err);  
   }).on('end', function() {
     console.log("End");
-    detectTextIntent(buf.toString().split('\n'))
-  }).on('finish', function() {
-    console.log("Finish");
-    // detectTextIntent(buf.toString().split('\n'))
-  });
+    // console.log(`final output `, buf);
+  }).pipe(outStream)
+  // .on('finish', function() {
+  //   console.log("Finish");
+  //   // detectTextIntent(buf.toString().split('\n'))
+  // }).pipe(fs.createWriteStream('jamesWasHere.txt'))
 
   // console.log(`  Event ${context.eventId}`);
   // console.log(`  Event Type: ${context.eventType}`);

@@ -12,25 +12,23 @@ async function helloGCS(event, context){
   var  buf = '';
   // console.log(`textFile: `,textFile);
   
-  textFile.on('data', function(d) {
-    console.log("Data");
-    buf += d;
-  }).on('response', function(response) {
-    console.log(`response:`);
-  }).on('error', function(err) {
-    console.log(`Readstream Error`, err);  
-  }).on('end', function() {
-    console.log("End");
-    detectTextIntent(buf.toString().split('\n'))
-  }).on('finish', function() {
-    console.log("Finish");
-    // detectTextIntent(buf.toString().split('\n'))
+  // const bucketName='jl_intent_analysis_upload_bucket1';
+  // const fileName='file name here';
+  // const storage = new Storage.Storage();
+  // const file = remoteFile.file(fileName);
+  
+  await remoteFile.download(async function(err, contents) {
+       console.log("file err: "+err);  
+       console.log("file data: "+contents);
+       await detectTextIntent(contents.toString().split('\n'))   
   });
+
+  console.log(`temp:`,temp);
 
   // console.log(`  Event ${context.eventId}`);
   // console.log(`  Event Type: ${context.eventType}`);
   // console.log(`  Bucket: ${file.bucket}`);
-  console.log(`  File: ${fileName}`);
+  // console.log(`  File: ${fileName}`);
   // console.log(`  Metageneration: ${file.metageneration}`);
   // console.log(`  Created: ${file.timeCreated}`);
   // console.log(`  Updated: ${file.updated}`);
@@ -57,7 +55,7 @@ async function helloGCS(event, context){
     for (const query of queries) {
       try {
         // console.log(`Sending Query: ${query}`);
-        console.log("came here 3", query)
+        console.log("came here 3")
         if (query.length > 10){
           intentResponse = await detectIntent(
             projectId,

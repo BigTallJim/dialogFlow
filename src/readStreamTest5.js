@@ -2,42 +2,70 @@
 'use strict';
 
 async function helloGCS(event, context){
-  console.log(event);
   const fileName = event && event.name ? event.name : 'testData.txt';
   const {Storage} = require('@google-cloud/storage');
+  const dialogflow = require('dialogflow');
   const storage = new Storage();
   const bucket = storage.bucket('jl_intent_analysis_upload_bucket1');
   const remoteFile = bucket.file(fileName);
   const textFile = remoteFile.createReadStream();
-  var  buf = '';
+  let  buf = '';
+
   // console.log(`textFile: `,textFile);
   
-  textFile.on('data', function(d) {
-    console.log("Data");
+  // Option 1 using readStream
+  // --------------------------
+  console.log("Running Option 1b")
+  remoteFile.createReadStream().on('data', function(d) {
+    console.log("Data", d);
     buf += d;
   }).on('response', function(response) {
-    console.log(`response:`);
+    console.log(`response:`, response);
   }).on('error', function(err) {
     console.log(`Readstream Error`, err);  
   }).on('end', function() {
-    console.log("End");
-    detectTextIntent(buf.toString().split('\n'))
+    console.log("End4");
+    console.log("End5");
+    detectTextIntentDummy(['xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxtest file for intent']);
   }).on('finish', function() {
     console.log("Finish");
-    // detectTextIntent(buf.toString().split('\n'))
-  });
+  }).on('close', function() {
+    console.log("Close");
+  })
+
+  // Option 2 using download
+  //------------------------
+  // console.log("Running Option 2")
+  // remoteFile.download(function(err, contents) {
+  //   console.log("file err: ", err);  
+  //   console.log("file data: ", contents);
+  //   detectTextIntent(contents.toString().split('\n'))   
+  // });
+
 
   // console.log(`  Event ${context.eventId}`);
   // console.log(`  Event Type: ${context.eventType}`);
   // console.log(`  Bucket: ${file.bucket}`);
-  console.log(`  File: ${fileName}`);
+  console. log(`  File: ${fileName}`);
   // console.log(`  Metageneration: ${file.metageneration}`);
   // console.log(`  Created: ${file.timeCreated}`);
   // console.log(`  Updated: ${file.updated}`);
 
 
+  function detectTextIntentDummy(queries) {
+    console.log("Came in dummy function4");
+    console.log("In detectTextIntent");
+    console.log("dialog", dialogflow);
+    const projectId = 'jlcategorisation-minvfh';
+    const sessionId = 'JLSessionID';
+    const languageCode = 'en';
+    // const dialogflow = require('dialogflow');
+    const sessionClient = new dialogflow.SessionsClient();
+    executeQueries(projectId, sessionId, queries, languageCode, sessionClient);
+  }
 
-  async function detectTextIntent(queries) {
+  function detectTextIntent(queries) {
+    console.log("In detectTextIntent");
     const projectId = 'jlcategorisation-minvfh';
     const sessionId = 'JLSessionID';
     const languageCode = 'en';
@@ -106,6 +134,5 @@ async function helloGCS(event, context){
     return responses[0];
   }
 };
-
 
 helloGCS(null, null);
